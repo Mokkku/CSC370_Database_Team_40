@@ -4,4 +4,8 @@ use reviews;
 
 create table user(
 	name varchar(120));
-select * from user
+
+create table post(
+	rating varchar(120));
+    
+select * from post;
