@@ -36,7 +36,7 @@ CREATE TABLE `answer` (
 );
     
 CREATE TABLE `Metadata` (
-	`tag_id` INT PRIMARY KEY,
+	`tag_id` INT PRIMARY KEY auto_increment,
 	`keyword` VARCHAR(60),
 	`question_id` INT, FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) on delete cascade
 );
@@ -73,15 +73,13 @@ insert into question
 	values(12345, "Question title.");
     
 insert into answer
-	values(answer_id=1, question_id=12345);
+	values(1, 12345);
     
-
-delete from post where post_id = 12345;
+insert into metadata (keyword, question_id)
+	values("tag1", 12345),
+    ("tag2", 12345);
     
-    
-
-
-        
+-- delete from post where post_id = 12345;
 
 -- Show tables and data ----------------------------------------------------------------
 
@@ -89,3 +87,5 @@ show tables;
 select * from users;
 select * from post;
 select * from question;
+select * from answer;
+select * from metadata;
