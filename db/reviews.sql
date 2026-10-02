@@ -15,24 +15,42 @@ create table users(
     username varchar(50),
     is_admin boolean);
     
-create table questions(
-	question_id int primary key,
-    title varchar(100),
-    date_created date,
-    body_text varchar(5000));
+CREATE TABLE `post` (
+	`post_id` INT PRIMARY KEY,
+	`date_created` date,
+	`text_body` varchar(5000),
+	user_id int
+);
     
-create table answers(
-	answer_id int primary key,
-    date_created date,
-    text_body varchar(5000),
-	question_id int,
-    foreign key (question_id) references questions(question_id));
+CREATE TABLE `question` (
+	`question_id` INT PRIMARY KEY,
+	`title` VARCHAR(120),
+	foreign key (question_id) references post (post_id) on delete cascade
+);
     
-create table metadata(
-	tag_id int primary key,
-    keyword varchar(120),
-    question_id int,
-    foreign key (question_id) references questions(question_id));
+CREATE TABLE `answer` (
+	`answer_id` INT PRIMARY KEY,
+	`question_id` int,
+	foreign key (answer_id) references post (post_id) on delete cascade,
+    foreign key (question_id) references question (question_id) on delete cascade
+);
+    
+CREATE TABLE `Metadata` (
+	`tag_id` INT PRIMARY KEY,
+	`keyword` VARCHAR(60),
+	`question_id` INT, FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) on delete cascade
+);
+
+create table VotesOn (
+	user_id int,
+	post_id int,
+	vote_type int,
+	FOREIGN KEY (user_id) REFERENCES `users`(user_id),
+	FOREIGN KEY (post_id) REFERENCES post(post_id),
+	primary key (user_id, post_id)
+);
+
+
 -- ------------------------------------------------------------------
 
 
@@ -47,28 +65,27 @@ values	('alpha_admin', true),
 		('delta_user', false),
 		('echo_guest', false);
         
-insert into questions
-values(12345, 'How long should I boil an egg?', '2000-09-16', 'How long should I realisticlaly boil an egg for a runny consistency?'),
-		(00000, 'difference between text and varchar in sql', '2016-05-10', 'what is the performance difference between using text vs. varchar(5000) for storing body text?'),
-		(12346,'is it bool or boolean in mysql', '2026-09-28', 'I\'m using MySQL version 5.1.49-1ubuntu8.1. It allows me to define columns of two different data types: BOOL and BOOLEAN. What are the differences between the two types?');
+insert into post 
+	values(12345, "2006-01-23", "this is a question.", 1),
+    (1, "2005-02-23", "this is an answer.", 2);
+    
+insert into question
+	values(12345, "Question title.");
+    
+insert into answer
+	values(answer_id=1, question_id=12345);
+    
 
-insert into answers 
-values 	(1, '2000-09-17', 'for a runny yolk, boil the egg for 6 to 7 minutes and put it in an ice bath immediately after.', 12345),
-		(2, '2000-09-18', '6 minutes in boiling water will give you a runny yolk and set whites.', 12345),
-		(3, '2016-05-11', 'in mysql, varchar is stored inline with the row up to its defined limit, while text is stored off-page if large.', 0),
-		(4, '2026-09-28', 'in mysql, bool and boolean are exact synonyms for tinyint(1). 0 is false, 1 is true.', 12346);
+delete from post where post_id = 12345;
+    
+    
 
-insert into metadata 
-values	(1, 'cooking', 12345),
-		(2, 'eggs', 12345),
-		(3, 'sql', 0),
-		(4, 'database', 0),
-		(5, 'mysql', 12346),
-		(6, 'boolean', 12346);
+
+        
+
 -- Show tables and data ----------------------------------------------------------------
 
 show tables;
 select * from users;
-select * from questions;
-select * from answers;
-select * from metadata;
+select * from post;
+select * from question;
