@@ -11,43 +11,51 @@ use reviews;
 -- Create tables for db ------------------------------------------------
 
 create table users(
-    user_id int primary key auto_increment,
-    username varchar(50),
-    is_admin boolean);
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50),
+    is_admin BOOLEAN);
     
 CREATE TABLE `post` (
 	`post_id` INT PRIMARY KEY,
-	`date_created` date,
-	`text_body` varchar(5000),
-	user_id int
+	`date_created` DATE,
+	`text_body` VARCHAR(5000),
+	user_id INT
 );
     
 CREATE TABLE `question` (
 	`question_id` INT PRIMARY KEY,
 	`title` VARCHAR(120),
-	foreign key (question_id) references post (post_id) on delete cascade
+	FOREIGN KEY (`question_id`) REFERENCES post (post_id) ON DELETE CASCADE
 );
     
 CREATE TABLE `answer` (
 	`answer_id` INT PRIMARY KEY,
 	`question_id` int,
-	foreign key (answer_id) references post (post_id) on delete cascade,
-    foreign key (question_id) references question (question_id) on delete cascade
+	FOREIGN KEY (answer_id) REFERENCES post (post_id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES question (question_id) ON DELETE CASCADE
 );
     
 CREATE TABLE `Metadata` (
-	`tag_id` INT PRIMARY KEY auto_increment,
+	`tag_id` INT PRIMARY KEY AUTO_INCREMENT,
 	`keyword` VARCHAR(60),
-	`question_id` INT, FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) on delete cascade
+	`question_id` INT, FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) ON DELETE CASCADE
 );
 
 create table VotesOn (
-	user_id int,
-	post_id int,
-	vote_type int,
-	FOREIGN KEY (user_id) REFERENCES `users`(user_id),
-	FOREIGN KEY (post_id) REFERENCES post(post_id),
-	primary key (user_id, post_id)
+	`user_id` INT,
+	`post_id` INT,
+	`vote_type` INT,
+	PRIMARY KEY (`user_id`, `post_id`),
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`),
+	FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`)
+);
+
+CREATE TABLE `Reports` (
+	`user_id` INT,
+	`post_id` INT,
+	PRIMARY KEY(`user_id`, `post_id`),
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`),
+    FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`)
 );
 
 
