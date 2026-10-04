@@ -46,16 +46,16 @@ create table `VotesOn` (
 	`post_id` INT,
 	`vote_type` INT,
 	PRIMARY KEY (`user_id`, `post_id`),
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`),
-	FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`)
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
+	FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `Reports` (
 	`user_id` INT,
 	`post_id` INT,
 	PRIMARY KEY(`user_id`, `post_id`),
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`),
-    FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`)
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`) ON DELETE CASCADE
 );
 
 
@@ -106,9 +106,9 @@ INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 (2, 6, 1);   -- bravo_user upvoted alpha_admin's battery answer
 
 INSERT INTO `Reports` (`user_id`, `post_id`) VALUES
-(4, 1);      -- delta_user reported a python question by accident
+(2, 1);      -- delta_user reported a python question by accident
     
--- delete from post where post_id = 12345;
+delete from post where post_id = 1;
 
 -- Show tables and data ----------------------------------------------------------------
 
