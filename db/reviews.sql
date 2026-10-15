@@ -39,9 +39,7 @@ CREATE TABLE `Answer` (
     
 CREATE TABLE `Metadata` (
 	`tag_id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-	`keyword` VARCHAR(60) NOT NULL,
-	`question_id` INT, 
-    FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) ON DELETE CASCADE
+	`keyword` VARCHAR(60) NOT NULL
 );
 
 create table `VotesOn` (
