@@ -3,62 +3,72 @@
 DROP DATABASE IF EXISTS reviews;
 create database Reviews;
 use reviews;
--- ---------------------------------------------------------------------
+---------------------------------------------------------------------
 
 
 
 
 -- Create tables for db ------------------------------------------------
 
-create table `users`(
-    `user_id` INT PRIMARY KEY AUTO_INCREMENT,
-    `username` VARCHAR(50),
-    `is_admin` BOOLEAN);
+create table `Users`(
+    `user_id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    `username` VARCHAR(50) UNIQUE NOT NULL,
+    `is_admin` BOOLEAN
+);
     
-CREATE TABLE `post` (
-	`post_id` INT PRIMARY KEY,
+CREATE TABLE `Post` (
+	`post_id` INT PRIMARY KEY NOT NULL,
 	`date_created` DATE,
 	`text_body` VARCHAR(5000),
-	`user_id` INT
+	`user_id` INT,
+    FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
 );
     
-CREATE TABLE `question` (
+CREATE TABLE `Question` (
 	`question_id` INT PRIMARY KEY,
-	`title` VARCHAR(120),
-	FOREIGN KEY (`question_id`) REFERENCES post (post_id) ON DELETE CASCADE
+	`title` VARCHAR(120) NOT NULL,
+	FOREIGN KEY (`question_id`) REFERENCES `Post` (`post_id`) ON DELETE CASCADE
 );
     
-CREATE TABLE `answer` (
-	`answer_id` INT PRIMARY KEY,
+CREATE TABLE `Answer` (
+	`answer_id` INT PRIMARY KEY NOT NULL,
 	`question_id` int,
-	FOREIGN KEY (`answer_id`) REFERENCES `post` (`post_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`question_id`) REFERENCES `question` (`question_id`) ON DELETE CASCADE
+	FOREIGN KEY (`answer_id`) REFERENCES `Post` (`post_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`) ON DELETE CASCADE
 );
     
 CREATE TABLE `Metadata` (
-	`tag_id` INT PRIMARY KEY AUTO_INCREMENT,
-	`keyword` VARCHAR(60),
-	`question_id` INT, FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) ON DELETE CASCADE
+	`tag_id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	`keyword` VARCHAR(60) NOT NULL,
+	`question_id` INT, 
+    FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) ON DELETE CASCADE
 );
 
 create table `VotesOn` (
 	`user_id` INT,
 	`post_id` INT,
-	`vote_type` INT,
+	`vote_type` ENUM('upvote', 'downvote') NOT NULL,
 	PRIMARY KEY (`user_id`, `post_id`),
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
-	FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`) ON DELETE CASCADE
+	FOREIGN KEY (`user_id`) REFERENCES `Users`(`user_id`) ON DELETE CASCADE,
+	FOREIGN KEY (`post_id`) REFERENCES `Post`(`post_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `Reports` (
 	`user_id` INT,
 	`post_id` INT,
 	PRIMARY KEY(`user_id`, `post_id`),
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`post_id`) REFERENCES `post`(`post_id`) ON DELETE CASCADE
+	FOREIGN KEY (`user_id`) REFERENCES `Users`(`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`post_id`) REFERENCES `Post`(`post_id`) ON DELETE CASCADE
 );
 
+CREATE TABLE `Describes` (
+	`tag_id` INT,
+    `question_id` INT,
+    PRIMARY KEY (`tag_id`, `question_id`),
+    FOREIGN KEY (`tag_id`) REFERENCES `Metadata`(`tag_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) ON DELETE CASCADE
 
+);
 -- ------------------------------------------------------------------
 
 
@@ -87,7 +97,7 @@ INSERT INTO `question` (`question_id`, `title`) VALUES
 (3, 'How can I extend my laptop battery lifespan?');
     
 INSERT INTO `answer` (`answer_id`, `question_id`) VALUES
-(4, 1),
+(4, 1), 
 (5, 2),
 (6, 3);
     
@@ -108,7 +118,14 @@ INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 INSERT INTO `Reports` (`user_id`, `post_id`) VALUES
 (2, 1);      -- delta_user reported a python question by accident
     
-delete from post where post_id = 1;
+-- delete from post where post_id = 1;
+
+-- INSERT INTO `post` (`post_id`, `date_created`, `text_body`, `user_id`) VALUES
+-- (10, '2026-06-01', 'Question post 1', 3), -- primary key constraint error
+-- (10, '2026-06-02', 'Question post 2', 2); 
+
+-- INSERT INTO `question` (`question_id`, `title`) VALUES
+-- (20, 'Question post that does not have a post reference'); -- foreign key constraint error
 
 -- Show tables and data ----------------------------------------------------------------
 
