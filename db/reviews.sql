@@ -25,7 +25,7 @@ CREATE TABLE `Post` (
 );
     
 CREATE TABLE `Question` (
-	`question_id` INT PRIMARY KEY,
+	`question_id` INT PRIMARY KEY NOT NULL,
 	`title` VARCHAR(120) NOT NULL,
 	FOREIGN KEY (`question_id`) REFERENCES `Post` (`post_id`) ON DELETE CASCADE
 );
@@ -65,8 +65,8 @@ CREATE TABLE `Describes` (
     PRIMARY KEY (`tag_id`, `question_id`),
     FOREIGN KEY (`tag_id`) REFERENCES `Metadata`(`tag_id`) ON DELETE CASCADE,
     FOREIGN KEY (`question_id`) REFERENCES `Question`(`question_id`) ON DELETE CASCADE
-
 );
+
 -- ------------------------------------------------------------------
 
 
@@ -99,13 +99,21 @@ INSERT INTO `answer` (`answer_id`, `question_id`) VALUES
 (5, 2),
 (6, 3);
     
-INSERT INTO `Metadata` (`tag_id`, `keyword`, `question_id`) VALUES
-(1, 'python', 1),		-- question (ID:1) have tags 'python' & 'programming'
-(2, 'programming', 1),
-(3, 'cooking', 2),		-- question (ID:2) have tags 'cooking' & 'recipes'
-(4, 'recipes', 2),
-(5, 'hardware', 3),		-- question (ID:3) have tags 'hardware' & 'battery'
-(6, 'battery', 3);
+INSERT INTO `Metadata` (`tag_id`, `keyword`) VALUES
+(1, 'python'),		-- question (ID:1) have tags 'python' & 'programming'
+(2, 'programming'),
+(3, 'cooking'),		-- question (ID:2) have tags 'cooking' & 'recipes'
+(4, 'recipes'),
+(5, 'hardware'),		-- question (ID:3) have tags 'hardware' & 'battery'
+(6, 'battery');
+
+INSERT INTO `Describes` (`tag_id`, `question_id`) VALUES
+(1, 1),
+(2, 1),
+(3, 2),
+(4, 2),
+(5, 3),
+(6, 3);
 
 INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 (3, 4, 1),   -- charlie_dev upvoted alpha_admin's answer on python
@@ -116,14 +124,17 @@ INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 INSERT INTO `Reports` (`user_id`, `post_id`) VALUES
 (2, 1);      -- delta_user reported a python question by accident
     
--- delete from post where post_id = 1;
+INSERT INTO `Users` (`username`, `is_admin`) VALUES
+('NOT_UNIQUE', true)	-- Fails the UNIQUE constraint on 'username'
+;
 
--- INSERT INTO `post` (`post_id`, `date_created`, `text_body`, `user_id`) VALUES
--- (10, '2026-06-01', 'Question post 1', 3), -- primary key constraint error
--- (10, '2026-06-02', 'Question post 2', 2); 
+-- INSERT INTO `Users` (`username`, `is_admin`) VALUES
+-- ('NOT_UNIQUE', true)	-- Fails the UNIQUE constraint on 'username'
+-- ;
 
 -- INSERT INTO `question` (`question_id`, `title`) VALUES
--- (20, 'Question post that does not have a post reference'); -- foreign key constraint error
+-- (1, Null)	-- Fails the NOT NULL constraint on 'title'
+-- ;
 
 -- Show tables and data ----------------------------------------------------------------
 
@@ -133,3 +144,4 @@ select * from post;
 select * from question;
 select * from answer;
 select * from metadata;
+select * from describes;
