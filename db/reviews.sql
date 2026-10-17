@@ -39,7 +39,7 @@ CREATE TABLE `Answer` (
     
 CREATE TABLE `Metadata` (
 	`tag_id` INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-	`keyword` VARCHAR(60) NOT NULL
+	`keyword` VARCHAR(60) NOT NULL UNIQUE
 );
 
 create table `VotesOn` (
