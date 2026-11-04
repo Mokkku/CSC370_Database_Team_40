@@ -79,7 +79,8 @@ INSERT INTO `users` (`username`, `is_admin`) VALUES
 ('bravo_user', FALSE),	-- user ID: 2
 ('charlie_dev', TRUE),	-- user ID: 3
 ('delta_user', FALSE),	-- user ID: 4
-('echo_guest', FALSE);	-- user ID: 5
+('echo_guest', FALSE),	-- user ID: 5
+('foxtrot_guest', FALSE); -- User ID: 6
         
 INSERT INTO `post` (`post_id`, `date_created`, `text_body`, `user_id`) VALUES
 (1, '2026-06-01', 'How do I reverse a list in Python without modifying the original one?', 3), -- question
@@ -129,9 +130,9 @@ INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 INSERT INTO `Reports` (`user_id`, `post_id`) VALUES
 (2, 1);      -- delta_user reported a python question by accident
     
-INSERT INTO `Users` (`username`, `is_admin`) VALUES
-('NOT_UNIQUE', true)	-- Fails the UNIQUE constraint on 'username'
-;
+-- INSERT INTO `Users` (`username`, `is_admin`) VALUES
+-- ('NOT_UNIQUE', true)	-- Fails the UNIQUE constraint on 'username'
+-- ;
 
 -- INSERT INTO `Users` (`username`, `is_admin`) VALUES
 -- ('NOT_UNIQUE', true)	-- Fails the UNIQUE constraint on 'username'
