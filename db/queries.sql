@@ -23,12 +23,24 @@ WHERE `date_created` >= '2026-01-01'
     AND `question_id` = 2
 ORDER BY `date_created` DESC;
 
--- 2. Query: Retrieve all administrative users in the database.
+-- 3. Query: Retrieve all administrative users in the database.
 -- Relations: Users(user_id, username, is_admin)
 -- Justification: Allows the system to verify staff accounts and manage platform permissions.
 SELECT  `user_id`,`username`
 FROM `Users`
 WHERE `is_admin` = 1; 
+
+-- 4. Query: Retrieve a list of all posts made by a specific user including the title and date created of the posts.
+-- Relations: Users(user_id, username, is_admin)  Question(question_id, title)  Post(post_id, date_created, text_body, user_id)
+-- Justification: Allows the user to view all of the posts curated by one user as one informative list. 
+
+SELECT `username`, `title`, `date_created`
+FROM `Post`
+JOIN `Question` 
+	ON `Question`.`question_id` = `Post`.`post_id`
+JOIN `Users`
+	ON `Users`.`user_id` = `Post`.`user_id`
+WHERE `username` = 'echo_guest';
 
 -- Grouping and Aggregation Queries --
 
@@ -59,10 +71,10 @@ SELECT `post_id`, COUNT(*)
 FROM `VotesOn`
 GROUP BY `VotesOn`.`post_id`;
 
--- 4. Query: Retrieve the net number of votes a post has recieved
+-- 4. Query: Retrieve the net score of votes and total votes that a post has recieved.
 -- Relations: VotesOn(post_id, user_id, vote_type)
 -- Justification: Allows the user to see user sentiment towards a post/answer. 
-SELECT `post_id`, SUM(`VotesOn`.`vote_type`)
+SELECT `post_id`, SUM(`VotesOn`.`vote_type`) AS `Net Score`, COUNT(*) AS `Total Votes`
 FROM `VotesOn`
 GROUP BY `VotesOn`.`post_id`;
 
@@ -90,18 +102,21 @@ WHERE `user_id` NOT IN (
     FROM `Post`
     );
 
--- 3. Query: Retrieve the users with the most posts.
+-- 3. Query: Retrieve the users with the most  total number of posts.
 -- Relations: Users(user_id, username, is_admin)  Post(Post_id, date_created, text_body, user_id)
 -- Justification: Allows administrators to see which user has the greatest contribution to the forum.
-SELECT *
+SELECT `Users`.`user_id`, `username`, `is_admin`, COUNT(*) AS `Total Posts`
 FROM `Users`
+JOIN `Post`
+	ON `Users`.`user_id` = `Post`.`user_id`
 WHERE `Users`.`user_id` = (
 	SELECT `Post`.`user_id`
     FROM `Post`
     GROUP BY `user_id`
     ORDER BY COUNT(`post_id`) DESC
     LIMIT 1
-);
+)
+GROUP BY `Users`.`user_id`, `username`, `is_admin`;
 
 -- 4. Query: Retrieve the posts with no answers.
 -- Relations: Answer(answer_id, post_id),  Post(Post_id, date_created, text_body, user_id)
