@@ -45,7 +45,7 @@ CREATE TABLE `Metadata` (
 create table `VotesOn` (
 	`user_id` INT,
 	`post_id` INT,
-	`vote_type` ENUM('upvote', 'downvote') NOT NULL,
+	`vote_type` TINYINT NOT NULL CHECK (`vote_type` IN (1, -1)),
 	PRIMARY KEY (`user_id`, `post_id`),
 	FOREIGN KEY (`user_id`) REFERENCES `Users`(`user_id`) ON DELETE CASCADE,
 	FOREIGN KEY (`post_id`) REFERENCES `Post`(`post_id`) ON DELETE CASCADE
@@ -125,7 +125,11 @@ INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 (3, 4, 1),   -- charlie_dev upvoted alpha_admin's answer on python
 (4, 1, 1),   -- delta_user upvoted charlie_dev's python question
 (1, 5, 1),   -- alpha_admin upvoted alpha_admin's egg answer
-(2, 6, 1);   -- bravo_user upvoted alpha_admin's battery answer
+(4, 5, -1),   -- delta_user downvoted alpha_admin's egg answer
+(2, 5, -1),   -- bravo_user downvoted alpha_admin's egg answer
+(2, 6, 1),   -- bravo_user upvoted alpha_admin's battery answer
+(1, 6, 1),   -- alpha_admin upvoted alpha_admin's battery answer
+(3, 6, 1);   -- charlie_dev upvoted alpha_admin's battery answer
 
 INSERT INTO `Reports` (`user_id`, `post_id`) VALUES
 (2, 1);      -- delta_user reported a python question by accident

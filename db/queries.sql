@@ -1,5 +1,7 @@
 -- (SELECT-FROM-WHERE) Queries --
 
+USE reviews;
+
 -- 1. Query: Retrieve all of the text of all of the answers for a specific question. (in this example-> Question 2)
 -- Relations: Answer(answer_id, question_id)  Post(post_id, date_created, text_body, user_id)
 -- Justification: Allows the user to view all of the responses to a specific question.
@@ -20,7 +22,6 @@ WHERE `date_created` >= '2026-01-01'
 	AND `date_created` < '2027-01-01'
     AND `question_id` = 2
 ORDER BY `date_created` DESC;
-
 
 -- Grouping and Aggregation Queries --
 
@@ -44,6 +45,19 @@ GROUP BY `Describes`.`tag_id`
 ORDER BY COUNT(`question_id`) DESC
 Limit 1;
 
+-- 3. Query: Retrieve the total number of votes a post has recieved
+-- Relations: VotesOn(post_id, user_id, vote_type)
+-- Justification: Allows administrators to track post interactivity. 
+SELECT `post_id`, COUNT(*)
+FROM `VotesOn`
+GROUP BY `VotesOn`.`post_id`;
+
+-- 4. Query: Retrieve the net number of votes a post has recieved
+-- Relations: VotesOn(post_id, user_id, vote_type)
+-- Justification: Allows the user to see user sentiment towards a post/answer. 
+SELECT `post_id`, SUM(`VotesOn`.`vote_type`)
+FROM `VotesOn`
+GROUP BY `VotesOn`.`post_id`;
 
 -- Subqueries --
 
