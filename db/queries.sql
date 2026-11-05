@@ -23,6 +23,13 @@ WHERE `date_created` >= '2026-01-01'
     AND `question_id` = 2
 ORDER BY `date_created` DESC;
 
+-- 2. Query: Retrieve all administrative users in the database.
+-- Relations: Users(user_id, username, is_admin)
+-- Justification: Allows the system to verify staff accounts and manage platform permissions.
+SELECT  `user_id`,`username`
+FROM `Users`
+WHERE `is_admin` = 1; 
+
 -- Grouping and Aggregation Queries --
 
 -- 1. Query: Retrieve the question that has the most answers. 
@@ -82,3 +89,30 @@ WHERE `user_id` NOT IN (
 	SELECT `user_id`
     FROM `Post`
     );
+
+-- 3. Query: Retrieve the users with the most posts.
+-- Relations: Users(user_id, username, is_admin)  Post(Post_id, date_created, text_body, user_id)
+-- Justification: Allows administrators to see which user has the greatest contribution to the forum.
+SELECT *
+FROM `Users`
+WHERE `Users`.`user_id` = (
+	SELECT `Post`.`user_id`
+    FROM `Post`
+    GROUP BY `user_id`
+    ORDER BY COUNT(`post_id`) DESC
+    LIMIT 1
+);
+
+-- 4. Query: Retrieve the posts with no answers.
+-- Relations: Answer(answer_id, post_id),  Post(Post_id, date_created, text_body, user_id)
+-- Justification: Allows community members to find unanswered questions and provide assistance.
+SELECT `post_id`
+FROM `Post`
+WHERE `Post`.`post_id` NOT IN (
+	SELECT `question_id`
+    FROM `Answer`
+)
+AND `Post`.`post_id` NOT IN (
+	SELECT `answer_id`
+    FROM `Answer`
+)

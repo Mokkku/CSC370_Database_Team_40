@@ -90,13 +90,15 @@ INSERT INTO `post` (`post_id`, `date_created`, `text_body`, `user_id`) VALUES
 (5, '2026-06-02', 'Crack the shell on a flat surface and gently pull it apart with your fingers. Also, be sure you are using fresh eggs. When they get older, the yolks get more fragile. ', 1),
 (6, '2026-06-03', 'Try to keep your charge levels between 20% and 80%, and avoid letting it overheat while gaming or rendering.', 1), -- answer
 (7, '2026-06-04', 'Crack the shell on the side of a bowl with medium force. If not enough force is applied, the egg may not open easily. If too much force is applied, the egg shells may end up mixed into the yolk.', 5), -- answer
-(8, '2026-06-05', 'How do I prevent water from boiling over?', 5); -- question
+(8, '2026-06-05', 'How do I prevent water from boiling over?', 5), -- question
+(9, '2026-06-06', 'How do I play Magic: The Gathering?', 5); -- question
 
 INSERT INTO `question` (`question_id`, `title`) VALUES
 (1, 'How do I reverse a list in Python?'),
 (2, 'How to crack and egg?'),
 (3, 'How can I extend my laptop battery lifespan?'),
-(8, 'How do I prevent water from boiling over?');
+(8, 'How do I prevent water from boiling over?'),
+(9, 'How do I play Magic: The Gathering?');
     
 INSERT INTO `answer` (`answer_id`, `question_id`) VALUES
 (4, 1), 
