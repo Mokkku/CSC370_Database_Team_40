@@ -34,7 +34,7 @@ WHERE `is_admin` = 1;
 -- Relations: Users(user_id, username, is_admin)  Question(question_id, title)  Post(post_id, date_created, text_body, user_id)
 -- Justification: Allows the user to view all of the posts curated by one user as one informative list. 
 
-SELECT `username`, `title`, `date_created`
+SELECT `username` AS `Username`, `title` AS `Title`, `date_created` AS `Date`
 FROM `Post`
 JOIN `Question` 
 	ON `Question`.`question_id` = `Post`.`post_id`
@@ -78,10 +78,22 @@ SELECT `post_id`, SUM(`VotesOn`.`vote_type`) AS `Net Score`, COUNT(*) AS `Total 
 FROM `VotesOn`
 GROUP BY `VotesOn`.`post_id`;
 
+-- 5. Query: Retrieve all of the Posts created this year that have negative overall feedback (i.e. more downvotes than upvotes).
+-- Relations: VotesOn(post_id, user_id, vote_type)  Post(post_id, date_created, text_body, user_id)
+-- Justification: Allows administrators to monitor posts that have receieved negative community feedback to learn more about user sentiment. 
+SELECT `text_body`, `Post`.`post_id`, SUM(`vote_type`) AS `Net Score`
+FROM `Post`
+JOIN `VotesOn`
+	ON `Post`.`post_id` = `VotesOn`.`post_id`
+WHERE `date_created` >= '2026-01-01'
+	AND `date_created` < '2027-01-01'
+GROUP BY `Post`.`post_id`
+HAVING SUM(`vote_type`) < 0;
+
 -- Subqueries --
 
 -- 1. Query: Retrieve the titles of all Questions related to a specific keyword. (in this example, keyword = cooking)
--- Relations: Question(question_id, title)  Metadata(tag_id, keyword)  Describes(tag_id, question_id)
+-- Relations: Question(question_id, title),  Metadata(tag_id, keyword)  Describes(tag_id, question_id)
 -- Justification: Allows the user to filter questions by topics to find things related to their interests.
 SELECT `title`
 FROM `Question`
@@ -130,4 +142,20 @@ WHERE `Post`.`post_id` NOT IN (
 AND `Post`.`post_id` NOT IN (
 	SELECT `answer_id`
     FROM `Answer`
-)
+);
+
+-- 5. Query: Retrieve questions that have at least one answer with a positive net score (more positive ratings than negative).
+-- Relations: VotesOn(post_id, user_id, vote_type), Answer(answer_id, question_id), Question(question_id, title) 
+-- Justification: Allows users to find questions that have positively rated Answers from the community.
+SELECT `title`, `question_id`
+FROM `Question`
+WHERE EXISTS(
+	SELECT `answer_id`
+	FROM `Answer`
+    JOIN `VotesOn`
+		ON `Answer`.`answer_id` = `VotesOn`.`post_id`
+	WHERE `Answer`.`question_id` = `Question`.`question_id`
+    GROUP BY `Answer`.`answer_id`
+    HAVING SUM(`vote_type`) > 0
+    );
+
