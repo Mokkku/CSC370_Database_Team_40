@@ -3,7 +3,7 @@
 USE reviews;
 
 -- 1. Query: Retrieve all of the text of all of the answers for a specific question. (in this example-> Question 2)
--- Relations: Answer(answer_id, question_id)  Post(post_id, date_created, text_body, user_id)
+-- Relations: Answer(answer_id, question_id),  Post(post_id, date_created, text_body, user_id)
 -- Justification: Allows the user to view all of the responses to a specific question.
 SELECT `question_id`, `text_body`
 FROM `Post`
@@ -89,6 +89,15 @@ WHERE `date_created` >= '2026-01-01'
 	AND `date_created` < '2027-01-01'
 GROUP BY `Post`.`post_id`
 HAVING SUM(`vote_type`) < 0;
+
+-- 6. Query: Retrieve all the questions and show how many Answers each question has received, including Questions with no answers.
+-- Relations: Question(question_id, title), Answer(answer_id, question_id)
+-- Justification: Allows users to find questions that have no answers and contribute to them.
+SELECT `title`, COUNT(`Answer`.`answer_id`) AS `Total Answers`
+FROM `Question`
+LEFT OUTER JOIN `Answer`
+	ON `Question`.`question_id` = `Answer`.`question_id`
+GROUP BY `Question`.`question_id`;
 
 -- Subqueries --
 
