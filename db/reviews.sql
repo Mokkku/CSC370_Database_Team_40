@@ -1,12 +1,19 @@
--- Non-persistence for database -------------------------------------
 
+-- Non-persistence for database -------------------------------------
 DROP DATABASE IF EXISTS reviews;
 create database Reviews;
 use reviews;
----------------------------------------------------------------------
+-- -------------------------------------------------------------------
 
+-- Authorization and Permissions ------------------------------------
 
+-- Delete the existing user
+DROP USER 'Admin'@'localhost';
 
+CREATE USER 'Admin'@'localhost' IDENTIFIED BY 'adminpass333';
+GRANT ALL PRIVILEGES ON Reviews.* TO 'Admin'@'localhost';
+FLUSH PRIVILEGES;
+-- -------------------------------------------------------------------
 
 -- Create tables for db ------------------------------------------------
 
@@ -135,18 +142,14 @@ INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 
 INSERT INTO `Reports` (`user_id`, `post_id`) VALUES
 (2, 1);      -- delta_user reported a python question by accident
+
+-- Deletes all posts that have been reported
+DELETE FROM `Post` 
+WHERE `post`.`post_id` IN (
+	SELECT `post_id`
+    FROM `Reports`)
+;
     
--- INSERT INTO `Users` (`username`, `is_admin`) VALUES
--- ('NOT_UNIQUE', true)	-- Fails the UNIQUE constraint on 'username'
--- ;
-
--- INSERT INTO `Users` (`username`, `is_admin`) VALUES
--- ('NOT_UNIQUE', true)	-- Fails the UNIQUE constraint on 'username'
--- ;
-
--- INSERT INTO `question` (`question_id`, `title`) VALUES
--- (1, Null)	-- Fails the NOT NULL constraint on 'title'
--- ;
 
 -- Show tables and data ----------------------------------------------------------------
 
