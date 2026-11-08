@@ -115,17 +115,17 @@ WHERE `question_id` IN (
     
 -- 2. Query: Retrieve all users who have not made a post in the database.
 -- Relations: Users(user_id, username, is_admin)  Post(Post_id, date_created, text_body, user_id)
--- Justification: Allows administrators to track users who are inactive. 
-SELECT `user_id`
+-- Justification: Allows administrators to better understand user participation. 
+SELECT `user_id`, `username`
 FROM `Users`
 WHERE `user_id` NOT IN (
 	SELECT `user_id`
     FROM `Post`
     );
 
--- 3. Query: Retrieve the users with the most  total number of posts.
+-- 3. Query: Retrieve one of the users with the greatest total number of posts (breaks ties by choosing a user with the lowest user ID number)
 -- Relations: Users(user_id, username, is_admin)  Post(Post_id, date_created, text_body, user_id)
--- Justification: Allows administrators to see which user has the greatest contribution to the forum.
+-- Justification: Allows administrators to filter by one of the users that have the greatest contributions to the forum.
 SELECT `Users`.`user_id`, `username`, `is_admin`, COUNT(*) AS `Total Posts`
 FROM `Users`
 JOIN `Post`
@@ -134,7 +134,7 @@ WHERE `Users`.`user_id` = (
 	SELECT `Post`.`user_id`
     FROM `Post`
     GROUP BY `user_id`
-    ORDER BY COUNT(`post_id`) DESC
+    ORDER BY COUNT(`post_id`) DESC, `user_id` ASC
     LIMIT 1
 )
 GROUP BY `Users`.`user_id`, `username`, `is_admin`;
@@ -155,7 +155,7 @@ AND `Post`.`post_id` NOT IN (
 
 -- 5. Query: Retrieve questions that have at least one answer with a positive net score (more positive ratings than negative).
 -- Relations: VotesOn(post_id, user_id, vote_type), Answer(answer_id, question_id), Question(question_id, title) 
--- Justification: Allows users to find questions that have positively rated Answers from the community.
+-- Justification: Helps to highlight questions that have positively rated Answers from the community.
 SELECT `title`, `question_id`
 FROM `Question`
 WHERE EXISTS(
