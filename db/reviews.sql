@@ -8,7 +8,7 @@ use reviews;
 -- Authorization and Permissions ------------------------------------
 
 -- Delete the existing user
-DROP USER 'Admin'@'localhost';
+DROP USER IF EXISTS 'Admin'@'localhost';
 
 CREATE USER 'Admin'@'localhost' IDENTIFIED BY 'adminpass333';
 GRANT ALL PRIVILEGES ON Reviews.* TO 'Admin'@'localhost';
