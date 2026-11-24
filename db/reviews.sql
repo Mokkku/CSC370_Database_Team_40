@@ -143,14 +143,16 @@ INSERT INTO `VotesOn` (`user_id`, `post_id`, `vote_type`) VALUES
 INSERT INTO `Reports` (`user_id`, `post_id`) VALUES
 (2, 1);      -- delta_user reported a python question by accident
 
--- Deletes all posts that have been reported
-DELETE FROM `Post` 
-WHERE `post`.`post_id` IN (
-	SELECT `post_id`
-    FROM `Reports`)
-;
+CREATE TRIGGER `DeletePost`
+	BEFORE DELETE 
+    ON `Question`
+    FOR EACH ROW
+    DELETE FROM `Post`
+    WHERE `Post`.`post_id` = OLD.`question_id`;
     
-
+DELETE FROM `Question`
+WHERE `question_id` = 1;
+    
 -- Show tables and data ----------------------------------------------------------------
 
 show tables;
