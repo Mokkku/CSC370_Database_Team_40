@@ -167,4 +167,47 @@ WHERE EXISTS(
     GROUP BY `Answer`.`answer_id`
     HAVING SUM(`vote_type`) > 0
     );
+    
+-- Transactions --
 
+-- 1. Post a new question with tags (Atomic multi-table insert)
+START TRANSACTION;
+	INSERT INTO `Post` (`post_id`, `date_created`, `text_body`, `user_id`)
+    VALUES (10, CURDATE(), 'What course number is Database Systems?', 2);
+    
+    INSERT INTO `Question` (`question_id`, `title`)
+    VALUES (10, 'What course number is Database Systems?');
+    
+    INSERT IGNORE INTO `Metadata` (`keyword`) VALUES ('database');
+    
+    INSERT INTO `Describes` (`tag_id`, `question_id`)
+		SELECT `tag_id`, 10
+        FROM `Metadata`
+        WHERE `keyword` = 'database';
+        
+	COMMIT;
+    
+-- 2. Post an answer
+START TRANSACTION;
+	INSERT INTO `Post` (`post_id`, `date_created`, `text_body`, `user_id`)
+    VALUES (11, CURDATE(), 'CSC 370', 4);
+    
+    INSERT INTO `Answer` (`answer_id`, `question_id`)
+    VALUES (11, 10);
+    
+    COMMIT;
+
+-- 3. Delete a user and all the posts they created
+START TRANSACTION;
+
+	DELETE FROM `Post` WHERE `user_id` = 5;
+    DELETE FROM `Users` WHERE `user_id` = 5;
+    
+    COMMIT;
+
+-- Check that Transactions worked
+SELECT *
+FROM `Post`;
+
+SELECT *
+FROM `Users`;
