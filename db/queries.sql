@@ -30,9 +30,9 @@ SELECT  `user_id`,`username`
 FROM `Users`
 WHERE `is_admin` = 1; 
 
--- 4. Query: Retrieve a list of all posts made by a specific user including the title and date created of the posts.
+-- 4. Query: Retrieve a list of all questions made by a specific user including the title and date created of the questions.
 -- Relations: Users(user_id, username, is_admin)  Question(question_id, title)  Post(post_id, date_created, text_body, user_id)
--- Justification: Allows the user to view all of the posts curated by one user as one informative list. 
+-- Justification: Allows the user to view all of the questions curated by one user as one informative list. 
 
 SELECT `username` AS `Username`, `title` AS `Title`, `date_created` AS `Date`
 FROM `Post`
@@ -44,14 +44,14 @@ WHERE `username` = 'echo_guest';
 
 -- Grouping and Aggregation Queries --
 
--- 1. Query: Retrieve the question that has the most answers. 
+-- 1. Query: Retrieve the question that has the most answers. Ties are broken by choosing the lowest numbered question_id.
 -- Relations: Answer(answer_id, question_id)  Question(question_id, title)
 -- Justification: Allows the user to find the question that is generating the most engagement.
 SELECT `title` AS `Question`, COUNT(*) AS `Answers`
 FROM `Question`
 JOIN `Answer` ON `Answer`.`question_id` = `Question`.`question_id`
 GROUP BY `Question`.`question_id`
-ORDER BY COUNT(`answer_id`) DESC
+ORDER BY COUNT(`answer_id`) DESC, `Question`.`question_id` ASC
 Limit 1;
 
 -- 2. Query: Retrieve the keyword that has the most questions related to it.
@@ -139,19 +139,15 @@ WHERE `Users`.`user_id` = (
 )
 GROUP BY `Users`.`user_id`, `username`, `is_admin`;
 
--- 4. Query: Retrieve the posts with no answers.
--- Relations: Answer(answer_id, post_id),  Post(Post_id, date_created, text_body, user_id)
+-- 4. Query: Retrieve questions with no answers.
+-- Relations: Answer(answer_id, question_id),  Question(question_id, title)
 -- Justification: Allows community members to find unanswered questions and provide assistance.
-SELECT `post_id`
-FROM `Post`
-WHERE `Post`.`post_id` NOT IN (
+SELECT `question_id`
+FROM `Question`
+WHERE `question_id` NOT IN (
 	SELECT `question_id`
     FROM `Answer`
-)
-AND `Post`.`post_id` NOT IN (
-	SELECT `answer_id`
-    FROM `Answer`
-);
+    );
 
 -- 5. Query: Retrieve questions that have at least one answer with a positive net score (more positive ratings than negative).
 -- Relations: VotesOn(post_id, user_id, vote_type), Answer(answer_id, question_id), Question(question_id, title) 

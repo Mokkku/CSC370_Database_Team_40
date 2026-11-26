@@ -27,7 +27,7 @@ CREATE TABLE `Post` (
 	`post_id` INT PRIMARY KEY NOT NULL,
 	`date_created` DATE,
 	`text_body` VARCHAR(5000),
-	`user_id` INT,
+	`user_id` INT NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
 );
     
@@ -39,7 +39,7 @@ CREATE TABLE `Question` (
     
 CREATE TABLE `Answer` (
 	`answer_id` INT PRIMARY KEY NOT NULL,
-	`question_id` int,
+	`question_id` int NOT NULL,
 	FOREIGN KEY (`answer_id`) REFERENCES `Post` (`post_id`) ON DELETE CASCADE,
     FOREIGN KEY (`question_id`) REFERENCES `Question` (`question_id`) ON DELETE CASCADE
 );
